@@ -33,6 +33,13 @@ RUN composer install --no-dev --optimize-autoloader
 RUN npm install
 RUN npm run build
 
+# --- NEW CACHING & OPTIMIZATION CODE ---
+# Force Laravel to compile and cache its configuration, routing, and blade views
+RUN php artisan config:cache
+RUN php artisan route:cache
+RUN php artisan view:cache
+# ---------------------------------------
+
 # Fix permissions so Apache can read/write to Laravel's cache/storage folders
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
