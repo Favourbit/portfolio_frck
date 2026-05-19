@@ -4,40 +4,34 @@ import { Head, Link } from '@inertiajs/vue3';
 import Header from '@/components/Header.vue';
 import axios from 'axios';
 
-// Reactive form state matching what Laravel expects
-const form = ref({
+// Use Inertia's built-in form helper (handles CSRF tokens automatically)
+const form = useForm({
     name: '',
     email: '',
     message: ''
 });
 
-const isSending = ref(false);
 const statusMessage = ref('');
 const isError = ref(false);
 
-const submitForm = async () => {
-    isSending.value = true;
+const submitForm = () => {
     statusMessage.value = 'Sending...';
     isError.value = false;
-    
-    try {
-        // Send request to your Laravel route
-        const response = await axios.post('/contact', form.value);
-        
-        statusMessage.value = "Message sent successfully!";
-        
-        // Reset form variables cleanly
-        form.value.name = '';
-        form.value.email = '';
-        form.value.message = '';
-    } catch (error) {
-        isError.value = true;
-        statusMessage.value = "Oops! Something went wrong. Please try again.";
-    } finally {
-        isSending.value = false;
-    }
-};
 
+    // Direct POST request using Inertia
+    form.post('/contact', {
+        preserveScroll: true, // Stops the page from jarringly jumping around
+        onSuccess: () => {
+            statusMessage.value = "Message sent successfully! 🎉";
+            form.reset(); // Erases fields cleanly after success
+        },
+        onError: (errors) => {
+            isError.value = true;
+            statusMessage.value = "Oops! Please check your inputs and try again.";
+            console.error(errors);
+        }
+    });
+};
 // Active toggle state for the role selection capsule pill
 const activeRole = ref('graphic');
 
@@ -370,22 +364,27 @@ const socialLinks = [
                             <div class="field-group">
                                 <input v-model="form.name" type="text" placeholder="Enter your Name" required
                                     class="custom-form-field w-full text-black placeholder-slate-700 outline-none transition-all">
+                                <span v-if="form.errors.name" class="text-red-500 text-sm">{{ form.errors.name }}</span>
                             </div>
 
                             <div class="field-group">
                                 <input v-model="form.email" type="email" placeholder="Enter your Email" required
                                     class="custom-form-field w-full text-black placeholder-slate-700 outline-none transition-all">
+                                <span v-if="form.errors.email" class="text-red-500 text-sm">{{ form.errors.email
+                                    }}</span>
                             </div>
 
                             <div class="field-group">
                                 <textarea v-model="form.message" placeholder="Enter your Message" rows="5" required
                                     class="custom-form-field w-full text-black placeholder-slate-700 resize-none outline-none transition-all"></textarea>
+                                <span v-if="form.errors.message" class="text-red-500 text-sm">{{ form.errors.message
+                                    }}</span>
                             </div>
 
                             <div class="pt-2 flex flex-col sm:flex-row sm:items-center gap-4">
-                                <button type="submit" :disabled="isSending"
+                                <button type="submit" :disabled="form.processing"
                                     class="send-msg-btn bg-white text-black font-bold text-lg rounded-xl px-9 py-3.5 tracking-tight transition-transform active:scale-[0.99] disabled:opacity-50">
-                                    {{ isSending ? 'Sending...' : 'Send Message' }}
+                                    {{ form.processing ? 'Sending...' : 'Send Message' }}
                                 </button>
 
                                 <p v-if="statusMessage" :class="isError ? 'text-red-600' : 'text-green-600'"
@@ -397,7 +396,6 @@ const socialLinks = [
                     </div>
                 </div>
             </section>
-
         </main>
 
         <footer class="footer-wrapper w-full bg-black border-t border-slate-900 pt-12 pb-16 px-6 sm:px-12">
