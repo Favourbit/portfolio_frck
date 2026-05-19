@@ -29,6 +29,11 @@ RUN a2enmod rewrite
 WORKDIR /var/www/html
 COPY . .
 
+# --- NEW: FORCE ENVIRONMENT GENERATION ---
+# This copies your example file to a real .env file inside the container
+RUN cp .env.example .env
+# ------------------------------------------
+
 # Route Apache directly into Laravel's public directory
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
@@ -39,10 +44,9 @@ RUN composer install --no-dev --optimize-autoloader
 RUN npm install
 RUN npm run build
 
-# Force Laravel to compile and cache its configuration, routing, and blade views
-RUN php artisan config:cache
-RUN php artisan route:cache
-RUN php artisan view:cache
+# Clear any hardcoded caches and optimize
+RUN php artisan config:clear
+RUN php artisan cache:clear
 
 # Fix permissions so Apache can read/write to Laravel's cache/storage folders
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
