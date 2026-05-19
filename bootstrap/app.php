@@ -1,10 +1,8 @@
 <?php
 
-use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -13,9 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->web(append: [
-            HandleInertiaRequests::class,
-            AddLinkHeadersForPreloadedAssets::class,
+        // This is exactly where Laravel 11 handles CSRF exemptions
+        $middleware->validateCsrfTokens(except: [
+            'contact',
+            '/contact',
+            'contact/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
