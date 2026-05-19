@@ -7,7 +7,13 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# Install core PHP extensions required by Laravel
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
 # Install NodeJS & NPM directly (Needed to compile Vite/Vue assets)
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - \
@@ -33,12 +39,10 @@ RUN composer install --no-dev --optimize-autoloader
 RUN npm install
 RUN npm run build
 
-# --- NEW CACHING & OPTIMIZATION CODE ---
 # Force Laravel to compile and cache its configuration, routing, and blade views
 RUN php artisan config:cache
 RUN php artisan route:cache
 RUN php artisan view:cache
-# ---------------------------------------
 
 # Fix permissions so Apache can read/write to Laravel's cache/storage folders
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
