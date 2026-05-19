@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL; // <--- ADD THIS IMPORT
 use App\Services\BrevoTransportManager;
-
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,7 +22,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        \Illuminate\Support\Facades\Mail::extend('brevo', function (array $config) {
+        // 1. Force HTTPS production URLs to eliminate Mixed Content blocking
+        if (config('app.env') === 'production' || env('FORCE_HTTPS') === true) {
+            URL::forceScheme('https');
+        }
+
+        // 2. Bind our custom HTTPS Brevo transport to the 'brevo' mailer keyword
+        Mail::extend('brevo', function (array $config) {
             return new BrevoTransportManager();
         });
     }
