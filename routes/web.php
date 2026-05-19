@@ -21,7 +21,7 @@ Route::post('/contact', function (Request $request) {
 
     // 2. Fire a direct, standard HTTPS POST request straight to Brevo's endpoint
     $response = Http::withHeaders([
-        'api-key' => env('BREVO_API_KEY'),
+        'api-key' => env('BREVO_API_KEY') ?? env('MAIL_PASSWORD'),
         'accept' => 'application/json',
         'content-type' => 'application/json',
     ])->post('https://api.brevo.com/v3/smtp/email', [
