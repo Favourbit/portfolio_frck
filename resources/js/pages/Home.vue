@@ -4,6 +4,13 @@ import { Head, Link } from '@inertiajs/vue3';
 import Header from '@/components/Header.vue';
 import axios from 'axios';
 
+// The form variable is now properly enclosed and exposed to the template!
+const form = ref({
+    name: '',
+    email: '',
+    message: ''
+});
+
 const isSending = ref(false);
 const statusMessage = ref('');
 const isError = ref(false);
