@@ -17,21 +17,26 @@ class BrevoTransportManager extends AbstractTransport
     protected function doSend(SentMessage $message): void
     {
         $email = MessageConverter::toEmail($message->getOriginalMessage());
-        
         $htmlContent = $email->getHtmlBody() ?? $email->getTextBody();
 
+        // 1. Build a strict sender block using your verified master Brevo email login string
         $payload = [
             'sender' => [
-                'email' => config('mail.from.address'),
-                'name' => config('mail.from.name')
+                'email' => 'abc757001@smtp-brevo.com',
+                'name' => config('mail.from.name', 'My Portfolio')
             ],
             'to' => collect($email->getTo())->map(fn($to) => ['email' => $to->getAddress()])->toArray(),
-            'replyTo' => collect($email->getReplyTo())->map(fn($rt) => ['email' => $rt->getAddress()])->toArray() ?: null,
             'subject' => $email->getSubject(),
             'htmlContent' => (string) $htmlContent,
         ];
 
-        // Send over secure HTTPS port 443 using your Render dashboard key
+        // 2. Only add replyTo if a clean address is explicitly provided
+        $replyToFields = collect($email->getReplyTo())->map(fn($rt) => ['email' => $rt->getAddress()])->toArray();
+        if (!empty($replyToFields)) {
+            $payload['replyTo'] = $replyToFields[0]; // Brevo API prefers a single object or strict schema for replyTo
+        }
+
+        // 3. Fire the secure HTTPS API post
         Http::withHeaders([
             'api-key' => env('BREVO_API_KEY'),
             'accept' => 'application/json',
