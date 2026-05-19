@@ -61,6 +61,11 @@ return [
             // ],
         ],
 
+        'brevo' => [
+        'transport' => 'brevo',
+        'key' => env('BREVO_API_KEY'),
+    ],
+
         'resend' => [
             'transport' => 'resend',
         ],
@@ -108,9 +113,10 @@ return [
     |
     */
 
-    'from' => [
-    'address' => 'abc757001@smtp-brevo.com', // <--- Force your Brevo string here directly!
+  'from' => [
+    'address' => env('MAIL_FROM_ADDRESS', 'tekogmanain@gmail.com'),
     'name' => env('MAIL_FROM_NAME', 'My Portfolio'),
+
 ],
 
 ];
