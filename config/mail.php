@@ -60,10 +60,8 @@ return [
             //     'timeout' => 5,
             // ],
         ],
-
         'brevo' => [
         'transport' => 'brevo',
-        'key' => env('BREVO_API_KEY'),
     ],
 
         'resend' => [
@@ -113,10 +111,10 @@ return [
     |
     */
 
-  'from' => [
-    'address' => env('MAIL_FROM_ADDRESS', 'tekogmanain@gmail.com'),
-    'name' => env('MAIL_FROM_NAME', 'My Portfolio'),
+    'from' => [
+        'address' => env('MAIL_FROM_ADDRESS', 'tekogmanain@gmail.com'),
+        'name' => env('MAIL_FROM_NAME', 'My Portfolio'),
 
-],
+    ],
 
 ];

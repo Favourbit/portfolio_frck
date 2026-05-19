@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Mail;
+use App\Services\BrevoTransportManager;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,9 +22,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Force secure HTTPS asset links in production environments
-        if (config('app.env') === 'production' || env('FORCE_HTTPS', false)) {
-            URL::forceScheme('https');
-        }
+        \Illuminate\Support\Facades\Mail::extend('brevo', function (array $config) {
+            return new BrevoTransportManager();
+        });
     }
 }
