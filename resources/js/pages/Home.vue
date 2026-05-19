@@ -411,6 +411,17 @@ const socialLinks = [
         </main>
 
         <footer class="footer-wrapper w-full bg-black border-t border-slate-900 pt-12 pb-16 px-6 sm:px-12">
+            <a 
+            href="https://wa.me/237653606425" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="whatsapp-float-btn"
+            aria-label="Chat on WhatsApp"
+        >
+            <svg class="whatsapp-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 11.91.01c3.152.001 6.118 1.23 8.351 3.463 2.233 2.233 3.46 5.199 3.46 8.351-.003 6.557-5.338 11.894-11.85 11.894-2.004-.001-3.973-.51-5.713-1.478L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.725 1.451 5.436 0 9.86-4.413 9.863-9.849.002-2.634-1.023-5.11-2.885-6.973C16.48 1.92 14.015.892 11.397.892 5.962.892 1.54 5.305 1.536 10.74c-.001 1.624.425 3.208 1.232 4.616l-.978 3.564 3.65-.957zm11.534-6.84c-.31-.156-1.834-.905-2.119-1.01-.285-.104-.493-.156-.699.156-.207.312-.799.104-.979.312-.18.207-.363.234-.672.079-.31-.156-1.31-.483-2.496-1.542-.924-.824-1.548-1.842-1.73-2.154-.18-.31-.018-.478.137-.633.14-.139.31-.364.466-.546.156-.182.207-.312.31-.52.104-.207.052-.39-.026-.546-.078-.156-.699-1.684-.958-2.31-.252-.61-.51-.527-.699-.537-.181-.009-.389-.01-.597-.01-.208 0-.546.078-.83.39-.285.312-1.09 1.066-1.09 2.6 0 1.533 1.115 3.013 1.271 3.22.156.208 2.193 3.349 5.313 4.697.742.32 1.322.512 1.774.656.745.236 1.423.203 1.958.123.596-.089 1.834-.75 2.093-1.438.26-.687.26-1.276.182-1.402-.078-.125-.286-.203-.597-.36z"/>
+            </svg>
+        </a>
             <div class="limiter">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
                     <div class="footer-brand-column flex flex-col justify-between space-y-6">
@@ -460,6 +471,60 @@ const socialLinks = [
 </template>
 
 <style scoped>
+
+/* ==========================================================================
+   FLOATING WHATSAPP INTERACTIVE BADGE
+   ========================================================================== */
+
+.whatsapp-float-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    background-color: #25D366;
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(37, 211, 102, 0.4), 
+                0 10px 25px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                box-shadow 0.25s ease;
+}
+
+.whatsapp-icon {
+    width: 28px;
+    height: 28px;
+}
+
+/* Bouncy Hover Effect */
+.whatsapp-float-btn:hover {
+    transform: scale(1.08) translateY(-3px);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5), 
+                0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* Active Click Shrink feedback */
+.whatsapp-float-btn:active {
+    transform: scale(0.96) translateY(0);
+}
+
+/* Mobile Adjustments so it doesn't cover UI content blocks */
+@media (max-width: 640px) {
+    .whatsapp-float-btn {
+        bottom: 16px;
+        right: 16px;
+        width: 48px;
+        height: 48px;
+    }
+    .whatsapp-icon {
+        width: 24px;
+        height: 24px;
+    }
+}
 /* ==========================================================================
    PRODUCTION STYLING ARCHITECTURE (CLEANED & RESPONSIVE RECONSTRUCTED)
    ========================================================================== */
