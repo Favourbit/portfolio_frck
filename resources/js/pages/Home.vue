@@ -4,39 +4,43 @@ import { Head, Link } from '@inertiajs/vue3';
 import Header from '@/components/Header.vue';
 import axios from 'axios';
 
-// This is the "form" variable the template is looking for!
-const form = ref({
-    name: '',
-    email: '',
-    message: ''
-});
-
 const isSending = ref(false);
 const statusMessage = ref('');
 const isError = ref(false);
 
-const submitForm = async () => {
-    isSending.value = true;
-    statusMessage.value = 'Sending...';
+const submitForm = () => {
+    isSending.value = true;  // 1. Turn on the loading state
+    statusMessage.value = ''; // Reset message layout
     isError.value = false;
 
-    try {
-        // Simple, direct POST to the backend since CSRF is disabled in bootstrap/app.php
-        const response = await axios.post('/contact', form.value);
-
+    axios.post('/contact', {
+        name: form.value.name, // Make sure we match Vue ref mapping
+        email: form.value.email,
+        message: form.value.message
+    })
+    .then(response => {
+        isSending.value = false; // 2. Turn off loading state
+        isError.value = false;
         statusMessage.value = "Message sent successfully! ";
-
-        // Reset inputs cleanly
+        
+        // Reset the form fields cleanly
         form.value.name = '';
         form.value.email = '';
         form.value.message = '';
-    } catch (error) {
+    })
+    .catch(error => {
+        isSending.value = false; // 3. Turn off loading state
         isError.value = true;
-        statusMessage.value = "Oops! Something went wrong. Please check your Brevo settings on Render.";
-        console.error(error);
-    } finally {
-        isSending.value = false;
-    }
+        
+        if (error.response) {
+            // Force the exact error from Brevo to print inside your browser alert window
+            alert("SERVER ERROR SUBMISSION DETAILED DETAILS:\n" + JSON.stringify(error.response.data));
+            statusMessage.value = "Oops! " + (error.response.data.error || "Something went wrong.");
+        } else {
+            alert("NETWORK ERROR: " + error.message);
+            statusMessage.value = "Network bottleneck detected.";
+        }
+    });
 };
 // Active toggle state for the role selection capsule pill
 const activeRole = ref('graphic');

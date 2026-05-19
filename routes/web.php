@@ -27,7 +27,7 @@ Route::post('/contact', function (Request $request) {
     ])->post('https://api.brevo.com/v3/smtp/email', [
         'sender' => [
             'name' => 'Portfolio System',
-            'email' => 'abc757001@smtp-brevo.com', // double check this matches your Brevo login email
+            'email' => 'tekogmanain@gmail.com', // double check this matches your Brevo login email
         ],
         'to' => [
             [
