@@ -109,8 +109,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
-    ],
+    'address' => 'abc757001@smtp-brevo.com', // <--- Force your Brevo string here directly!
+    'name' => env('MAIL_FROM_NAME', 'My Portfolio'),
+],
 
 ];
