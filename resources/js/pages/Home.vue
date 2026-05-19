@@ -4,7 +4,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import Header from '@/components/Header.vue';
 import axios from 'axios';
 
-// 1. Set up standard reactive form state
+// This is the "form" variable the template is looking for!
 const form = ref({
     name: '',
     email: '',
@@ -21,30 +21,18 @@ const submitForm = async () => {
     isError.value = false;
 
     try {
-        // Automatically fetch a fresh CSRF cookie token from Laravel before making our POST request
-        await axios.get('/sanctum/csrf-cookie').catch(() => {
-            // Fallback: Try reading the token from the meta tag if sanctum isn't used
-            const token = document.head.querySelector('meta[name="csrf-token"]');
-            if (token) axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
-        });
-
-        // Send the post request directly to our route string path
+        // Simple, direct POST to the backend since CSRF is disabled in bootstrap/app.php
         const response = await axios.post('/contact', form.value);
 
         statusMessage.value = "Message sent successfully! ";
 
-        // Reset fields cleanly
+        // Reset inputs cleanly
         form.value.name = '';
         form.value.email = '';
         form.value.message = '';
     } catch (error) {
         isError.value = true;
-        // Check if it's still a 419 error or something else
-        if (error.response && error.response.status === 419) {
-            statusMessage.value = "Security token expired. Please refresh the page and try again.";
-        } else {
-            statusMessage.value = "Oops! Something went wrong. Please check your network or Brevo credentials.";
-        }
+        statusMessage.value = "Oops! Something went wrong. Please check your Brevo settings on Render.";
         console.error(error);
     } finally {
         isSending.value = false;
@@ -369,31 +357,45 @@ const socialLinks = [
             </section>
 
             <section id="contact" class="contact-section w-full px-6 pt-16 pb-24">
-                <form @submit.prevent="submitForm" class="flex flex-col gap-6">
-                    <div class="field-group">
-                        <input v-model="form.name" type="text" placeholder="Enter your Name" required
-                            class="custom-form-field w-full text-black placeholder-slate-700 outline-none">
-                    </div>
-                    <div class="field-group">
-                        <input v-model="form.email" type="email" placeholder="Enter your Email" required
-                            class="custom-form-field w-full text-black placeholder-slate-700 outline-none">
-                    </div>
-                    <div class="field-group">
-                        <textarea v-model="form.message" placeholder="Enter your Message" rows="5" required
-                            class="custom-form-field w-full text-black placeholder-slate-700 resize-none outline-none"></textarea>
+                <div class="container limiter flex flex-col gap-10 items-start">
+                    <div class="contact-header-block text-left">
+                        <h2 class="text-[44px] font-bold tracking-tight text-black font-sans leading-tight">
+                            Leave us a Message
+                        </h2>
                     </div>
 
-                    <div class="pt-2 flex flex-col sm:flex-row sm:items-center gap-4">
-                        <button type="submit" :disabled="isSending"
-                            class="send-msg-btn bg-white text-black font-bold text-lg rounded-xl px-9 py-3.5 tracking-tight active:scale-[0.99] disabled:opacity-50">
-                            {{ isSending ? 'Sending...' : 'Send Message' }}
-                        </button>
-                        <p v-if="statusMessage" :class="isError ? 'text-red-600' : 'text-green-600'"
-                            class="font-medium tracking-tight text-base">
-                            {{ statusMessage }}
-                        </p>
+                    <div class="contact-form-container w-full max-w-[620px]">
+                        <form @submit.prevent="submitForm" class="flex flex-col gap-6">
+
+                            <div class="field-group">
+                                <input v-model="form.name" type="text" placeholder="Enter your Name" required
+                                    class="custom-form-field w-full text-black placeholder-slate-700 outline-none transition-all">
+                            </div>
+
+                            <div class="field-group">
+                                <input v-model="form.email" type="email" placeholder="Enter your Email" required
+                                    class="custom-form-field w-full text-black placeholder-slate-700 outline-none transition-all">
+                            </div>
+
+                            <div class="field-group">
+                                <textarea v-model="form.message" placeholder="Enter your Message" rows="5" required
+                                    class="custom-form-field w-full text-black placeholder-slate-700 resize-none outline-none transition-all"></textarea>
+                            </div>
+
+                            <div class="pt-2 flex flex-col sm:flex-row sm:items-center gap-4">
+                                <button type="submit" :disabled="isSending"
+                                    class="send-msg-btn bg-white text-black font-bold text-lg rounded-xl px-9 py-3.5 tracking-tight transition-transform active:scale-[0.99] disabled:opacity-50">
+                                    {{ isSending ? 'Sending...' : 'Send Message' }}
+                                </button>
+
+                                <p v-if="statusMessage" :class="isError ? 'text-red-600' : 'text-green-600'"
+                                    class="font-medium tracking-tight text-base">
+                                    {{ statusMessage }}
+                                </p>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
             </section>
         </main>
 
