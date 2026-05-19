@@ -2,6 +2,41 @@
 import { ref, computed } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import Header from '@/components/Header.vue';
+import axios from 'axios';
+
+// Reactive form state matching what Laravel expects
+const form = ref({
+    name: '',
+    email: '',
+    message: ''
+});
+
+const isSending = ref(false);
+const statusMessage = ref('');
+const isError = ref(false);
+
+const submitForm = async () => {
+    isSending.value = true;
+    statusMessage.value = 'Sending...';
+    isError.value = false;
+    
+    try {
+        // Send request to your Laravel route
+        const response = await axios.post('/contact', form.value);
+        
+        statusMessage.value = "Message sent successfully!";
+        
+        // Reset form variables cleanly
+        form.value.name = '';
+        form.value.email = '';
+        form.value.message = '';
+    } catch (error) {
+        isError.value = true;
+        statusMessage.value = "Oops! Something went wrong. Please try again.";
+    } finally {
+        isSending.value = false;
+    }
+};
 
 // Active toggle state for the role selection capsule pill
 const activeRole = ref('graphic');
@@ -55,7 +90,7 @@ const row1Projects = computed(() => projects.value.slice(0, Math.ceil(projects.v
 const row2Projects = computed(() => projects.value.slice(Math.ceil(projects.value.length / 2)));
 
 const exploreLinks = [
-    { name: 'Work', href: '#work' },
+    { name: 'Work', href: '#projects' },
     { name: 'About', href: '#about' },
     { name: 'Process', href: '#process' },
     { name: 'Resume (PDF)', href: '/resume.pdf' },
@@ -63,32 +98,34 @@ const exploreLinks = [
 
 const socialLinks = [
     { name: 'GitHub', href: 'https://github.com' },
-    { name: 'LinkedIn', href: 'https://linkedin.com' },
+    { name: 'LinkedIn', href: 'https://linkedin.com/in/tekog-manain-7384a7336?' },
     { name: 'Dribbble / Behance', href: 'https://dribbble.com' },
-    { name: 'Instagram', href: 'https://instagram.com' },
+    { name: 'Instagram', href: 'https://instagram.com/favourtekog?' },
 ];
 </script>
 
 <template>
+
     <Head title="Creative Portfolio" />
 
     <div class="min-h-screen bg-white text-white font-sans antialiased page-container">
         <main class="page-content pb-16">
-            
+
             <section class="hero-section w-full px-4 sm:px-8 md:px-12 lg:px-24 relative overflow-hidden">
                 <Header />
-                
+
                 <div class="bg-blur-logo-asset hidden sm:flex">
                     <div class="logo-inner-vector">&lt;/&gt;</div>
                 </div>
 
                 <div class="container limiter pt-32 sm:pt-40 pb-16 relative z-10">
                     <div class="hero-grid">
-                        
+
                         <div class="hero-left text-center md:text-left flex flex-col items-center md:items-start">
                             <h1 class="hero-title">My Portfolio</h1>
                             <p class="hero-subtitle">
-                                This creative has a goal to use canvas and graphics to express feelings and pass information.
+                                This creative has a goal to use canvas and graphics to express feelings and pass
+                                information.
                             </p>
 
                             <div class="role-capsule-pill flex flex-wrap justify-center gap-1 sm:gap-0">
@@ -115,8 +152,10 @@ const socialLinks = [
                                 </div>
 
                                 <div class="avatar-photo-frame">
-                                    <div class="avatar-image-placeholder overflow-hidden flex items-center justify-center">
-                                        <img src="/images/verified.png" alt="Verified Portrait" class="w-full h-full object-cover">
+                                    <div
+                                        class="avatar-image-placeholder overflow-hidden flex items-center justify-center">
+                                        <img src="/images/verified.png" alt="Verified Portrait"
+                                            class="w-full h-full object-cover">
                                     </div>
                                 </div>
 
@@ -154,13 +193,18 @@ const socialLinks = [
                 <div class="container limiter">
                     <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-12 lg:gap-24">
                         <div class="about-left-text text-left">
-                            <span class="text-xs font-bold uppercase tracking-widest text-slate-500 block mb-1">Know more</span>
+                            <span class="text-xs font-bold uppercase tracking-widest text-slate-500 block mb-1">Know
+                                more</span>
                             <h2 class="text-4xl md:text-5xl font-extrabold text-black tracking-tight mb-8">
                                 <span class="text-[#0070f3]"> About </span> Me
                             </h2>
                             <div class="space-y-6 text-base text-black leading-relaxed max-w-xl">
-                                <p>I am a passionate creative professional focused on merging artistic vision with technical precision. With years of experience across multiple disciplines, I have crafted solutions for clients spanning the tech, media, and design sectors.</p>
-                                <p>My methodology integrates user-centric research, iterative design, and robust code deployment. I thrive on challenges that require strategic thinking and clean, modular execution. Let me bring clarity and impact to your next initiative.</p>
+                                <p>I am a passionate creative professional focused on merging artistic vision with
+                                    technical precision. With years of experience across multiple disciplines, I have
+                                    crafted solutions for clients spanning the tech, media, and design sectors.</p>
+                                <p>My methodology integrates user-centric research, iterative design, and robust code
+                                    deployment. I thrive on challenges that require strategic thinking and clean,
+                                    modular execution. Let me bring clarity and impact to your next initiative.</p>
                             </div>
                         </div>
 
@@ -186,12 +230,14 @@ const socialLinks = [
                         <div class="marquee-content-loop">
                             <div v-for="project in row1Projects" :key="'r1-' + project.id" class="marquee-card group">
                                 <div class="aspect-video w-full overflow-hidden bg-slate-900 rounded-t-2xl">
-                                    <img :src="project.image" :alt="project.title" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+                                    <img :src="project.image" :alt="project.title"
+                                        class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300">
                                 </div>
                                 <div class="p-5">
                                     <h3 class="text-white text-base font-bold mb-2 truncate">{{ project.title }}</h3>
                                     <div class="flex flex-wrap gap-1.5">
-                                        <span v-for="tag in project.tags" :key="tag" class="text-[10px] font-semibold uppercase tracking-wider text-[#00c8ff] bg-[#001d33] px-2 py-0.5 rounded-full">
+                                        <span v-for="tag in project.tags" :key="tag"
+                                            class="text-[10px] font-semibold uppercase tracking-wider text-[#00c8ff] bg-[#001d33] px-2 py-0.5 rounded-full">
                                             {{ tag }}
                                         </span>
                                     </div>
@@ -199,14 +245,17 @@ const socialLinks = [
                             </div>
                         </div>
                         <div class="marquee-content-loop" aria-hidden="true">
-                            <div v-for="project in row1Projects" :key="'r1-dup-' + project.id" class="marquee-card group">
+                            <div v-for="project in row1Projects" :key="'r1-dup-' + project.id"
+                                class="marquee-card group">
                                 <div class="aspect-video w-full overflow-hidden bg-slate-900 rounded-t-2xl">
-                                    <img :src="project.image" :alt="project.title" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+                                    <img :src="project.image" :alt="project.title"
+                                        class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300">
                                 </div>
                                 <div class="p-5">
                                     <h3 class="text-white text-base font-bold mb-2 truncate">{{ project.title }}</h3>
                                     <div class="flex flex-wrap gap-1.5">
-                                        <span v-for="tag in project.tags" :key="tag" class="text-[10px] font-semibold uppercase tracking-wider text-[#00c8ff] bg-[#001d33] px-2 py-0.5 rounded-full">
+                                        <span v-for="tag in project.tags" :key="tag"
+                                            class="text-[10px] font-semibold uppercase tracking-wider text-[#00c8ff] bg-[#001d33] px-2 py-0.5 rounded-full">
                                             {{ tag }}
                                         </span>
                                     </div>
@@ -219,12 +268,14 @@ const socialLinks = [
                         <div class="marquee-content-loop">
                             <div v-for="project in row2Projects" :key="'r2-' + project.id" class="marquee-card group">
                                 <div class="aspect-video w-full overflow-hidden bg-slate-900 rounded-t-2xl">
-                                    <img :src="project.image" :alt="project.title" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+                                    <img :src="project.image" :alt="project.title"
+                                        class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300">
                                 </div>
                                 <div class="p-5">
                                     <h3 class="text-white text-base font-bold mb-2 truncate">{{ project.title }}</h3>
                                     <div class="flex flex-wrap gap-1.5">
-                                        <span v-for="tag in project.tags" :key="tag" class="text-[10px] font-semibold uppercase tracking-wider text-[#00c8ff] bg-[#001d33] px-2 py-0.5 rounded-full">
+                                        <span v-for="tag in project.tags" :key="tag"
+                                            class="text-[10px] font-semibold uppercase tracking-wider text-[#00c8ff] bg-[#001d33] px-2 py-0.5 rounded-full">
                                             {{ tag }}
                                         </span>
                                     </div>
@@ -232,14 +283,17 @@ const socialLinks = [
                             </div>
                         </div>
                         <div class="marquee-content-loop" aria-hidden="true">
-                            <div v-for="project in row2Projects" :key="'r2-dup-' + project.id" class="marquee-card group">
+                            <div v-for="project in row2Projects" :key="'r2-dup-' + project.id"
+                                class="marquee-card group">
                                 <div class="aspect-video w-full overflow-hidden bg-slate-900 rounded-t-2xl">
-                                    <img :src="project.image" :alt="project.title" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+                                    <img :src="project.image" :alt="project.title"
+                                        class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300">
                                 </div>
                                 <div class="p-5">
                                     <h3 class="text-white text-base font-bold mb-2 truncate">{{ project.title }}</h3>
                                     <div class="flex flex-wrap gap-1.5">
-                                        <span v-for="tag in project.tags" :key="tag" class="text-[10px] font-semibold uppercase tracking-wider text-[#00c8ff] bg-[#001d33] px-2 py-0.5 rounded-full">
+                                        <span v-for="tag in project.tags" :key="tag"
+                                            class="text-[10px] font-semibold uppercase tracking-wider text-[#00c8ff] bg-[#001d33] px-2 py-0.5 rounded-full">
                                             {{ tag }}
                                         </span>
                                     </div>
@@ -268,11 +322,13 @@ const socialLinks = [
                                     <h3 class="text-black text-xl font-bold mb-2">{{ service.title }}</h3>
                                     <div class="space-y-2 text-sm text-slate-500">
                                         <p class="flex items-center gap-3">
-                                            <span :class="['h-2 w-2 rounded-full inline-block', service.id === 'dev' ? 'bg-[#00c8ff]' : 'bg-slate-400']"></span>
+                                            <span
+                                                :class="['h-2 w-2 rounded-full inline-block', service.id === 'dev' ? 'bg-[#00c8ff]' : 'bg-slate-400']"></span>
                                             {{ service.tech }}
                                         </p>
                                         <p class="flex items-center gap-3">
-                                            <span :class="['h-2 w-2 rounded-full inline-block', service.id === 'dev' ? 'bg-[#00c8ff]' : 'bg-slate-400']"></span>
+                                            <span
+                                                :class="['h-2 w-2 rounded-full inline-block', service.id === 'dev' ? 'bg-[#00c8ff]' : 'bg-slate-400']"></span>
                                             {{ service.experience }}
                                         </p>
                                     </div>
@@ -284,11 +340,13 @@ const socialLinks = [
                             <div v-for="service in services" :key="service.id + '-card'"
                                 :class="['p-8 rounded-[24px] shadow-xl flex items-center justify-between transition-all duration-300 hover:scale-[1.01]', service.cardClass]">
                                 <div>
-                                    <span :class="['inline-block px-5 py-1.5 rounded-full font-serif font-bold italic text-sm tracking-wide shadow-sm', service.pillClass]">
+                                    <span
+                                        :class="['inline-block px-5 py-1.5 rounded-full font-serif font-bold italic text-sm tracking-wide shadow-sm', service.pillClass]">
                                         {{ service.title }}
                                     </span>
                                 </div>
-                                <button class="h-12 w-12 rounded-full border-2 flex items-center justify-center transition-all duration-300"
+                                <button
+                                    class="h-12 w-12 rounded-full border-2 flex items-center justify-center transition-all duration-300"
                                     :class="service.id === 'motion' ? 'border-white/30 text-white' : 'border-slate-800 text-slate-400'">
                                     <span class="text-xl font-bold">→</span>
                                 </button>
@@ -302,25 +360,38 @@ const socialLinks = [
                 <div class="container limiter flex flex-col gap-10 items-start">
                     <div class="contact-header-block text-left">
                         <h2 class="text-[44px] font-bold tracking-tight text-black font-sans leading-tight">
-                            Leave us Message
+                            Leave us a Message
                         </h2>
                     </div>
 
                     <div class="contact-form-container w-full max-w-[620px]">
-                        <form @submit.prevent class="flex flex-col gap-6">
+                        <form @submit.prevent="submitForm" class="flex flex-col gap-6">
+
                             <div class="field-group">
-                                <input type="text" placeholder="Enter your Name"
+                                <input v-model="form.name" type="text" placeholder="Enter your Name" required
                                     class="custom-form-field w-full text-black placeholder-slate-700 outline-none transition-all">
                             </div>
+
                             <div class="field-group">
-                                <textarea placeholder="Enter your Message" rows="5"
+                                <input v-model="form.email" type="email" placeholder="Enter your Email" required
+                                    class="custom-form-field w-full text-black placeholder-slate-700 outline-none transition-all">
+                            </div>
+
+                            <div class="field-group">
+                                <textarea v-model="form.message" placeholder="Enter your Message" rows="5" required
                                     class="custom-form-field w-full text-black placeholder-slate-700 resize-none outline-none transition-all"></textarea>
                             </div>
-                            <div class="pt-2">
-                                <button type="submit"
-                                    class="send-msg-btn bg-white text-black font-bold text-lg rounded-xl px-9 py-3.5 tracking-tight transition-transform active:scale-[0.99]">
-                                    Send Message
+
+                            <div class="pt-2 flex flex-col sm:flex-row sm:items-center gap-4">
+                                <button type="submit" :disabled="isSending"
+                                    class="send-msg-btn bg-white text-black font-bold text-lg rounded-xl px-9 py-3.5 tracking-tight transition-transform active:scale-[0.99] disabled:opacity-50">
+                                    {{ isSending ? 'Sending...' : 'Send Message' }}
                                 </button>
+
+                                <p v-if="statusMessage" :class="isError ? 'text-red-600' : 'text-green-600'"
+                                    class="font-medium tracking-tight text-base">
+                                    {{ statusMessage }}
+                                </p>
                             </div>
                         </form>
                     </div>
@@ -349,8 +420,10 @@ const socialLinks = [
                             <h3 class="text-slate-700 font-bold uppercase tracking-widest text-xs mb-5">Explore</h3>
                             <ul class="space-y-3.5">
                                 <li v-for="link in exploreLinks" :key="link.name" class="flex items-center group">
-                                    <span class="h-1 w-1 rounded-full bg-slate-800 mr-2.5 transition-colors group-hover:bg-[#0070f3]"></span>
-                                    <Link :href="link.href" class="text-white text-base font-bold transition-colors group-hover:text-slate-300">
+                                    <span
+                                        class="h-1 w-1 rounded-full bg-slate-800 mr-2.5 transition-colors group-hover:bg-[#0070f3]"></span>
+                                    <Link :href="link.href"
+                                        class="text-white text-base font-bold transition-colors group-hover:text-slate-300">
                                         {{ link.name }}
                                     </Link>
                                 </li>
@@ -360,8 +433,10 @@ const socialLinks = [
                             <h3 class="text-slate-700 font-bold uppercase tracking-widest text-xs mb-5">Social</h3>
                             <ul class="space-y-3.5">
                                 <li v-for="link in socialLinks" :key="link.name" class="flex items-center group">
-                                    <span class="h-1 w-1 rounded-full bg-slate-800 mr-2.5 transition-colors group-hover:bg-[#0070f3]"></span>
-                                    <a :href="link.href" target="_blank" class="text-white text-base font-bold transition-colors group-hover:text-slate-300">
+                                    <span
+                                        class="h-1 w-1 rounded-full bg-slate-800 mr-2.5 transition-colors group-hover:bg-[#0070f3]"></span>
+                                    <a :href="link.href" target="_blank"
+                                        class="text-white text-base font-bold transition-colors group-hover:text-slate-300">
                                         {{ link.name }}
                                     </a>
                                 </li>
@@ -408,8 +483,8 @@ const socialLinks = [
     padding-bottom: 64px;
     margin-bottom: 64px;
     background: radial-gradient(circle at 82% 14%, #0c355a 0%, #031424 45%, #020617 100%),
-                radial-gradient(circle at 12% 52%, #0c355a 0%, #031424 50%, #020617 100%),
-                radial-gradient(circle at 78% 88%, #0c355a 0%, #031424 45%, #020617 100%);
+        radial-gradient(circle at 12% 52%, #0c355a 0%, #031424 50%, #020617 100%),
+        radial-gradient(circle at 78% 88%, #0c355a 0%, #031424 45%, #020617 100%);
     width: 100%;
     border-bottom-right-radius: 40px;
     border-bottom-left-radius: 40px;
@@ -609,23 +684,83 @@ const socialLinks = [
     }
 }
 
-.badge-code { background-color: #1a2536; bottom: 110px; left: 15px; border-radius: 50%; color: #10b981; animation-delay: 0s; }
-.badge-ps { background-color: #001c33; bottom: 65px; left: 75px; color: #00c8ff; animation-delay: 0.5s; }
-.badge-ai { background-color: #2b1400; bottom: 95px; right: 20px; color: #ff9a00; animation-delay: 1s; }
-.badge-figma { background-color: #1e1e1e; bottom: 20px; left: 35px; animation-delay: 1.5s; }
-.badge-lr { background-color: #001f2b; bottom: 30px; right: 65px; color: #31c7ff; animation-delay: 2s; }
+.badge-code {
+    background-color: #1a2536;
+    bottom: 110px;
+    left: 15px;
+    border-radius: 50%;
+    color: #10b981;
+    animation-delay: 0s;
+}
+
+.badge-ps {
+    background-color: #001c33;
+    bottom: 65px;
+    left: 75px;
+    color: #00c8ff;
+    animation-delay: 0.5s;
+}
+
+.badge-ai {
+    background-color: #2b1400;
+    bottom: 95px;
+    right: 20px;
+    color: #ff9a00;
+    animation-delay: 1s;
+}
+
+.badge-figma {
+    background-color: #1e1e1e;
+    bottom: 20px;
+    left: 35px;
+    animation-delay: 1.5s;
+}
+
+.badge-lr {
+    background-color: #001f2b;
+    bottom: 30px;
+    right: 65px;
+    color: #31c7ff;
+    animation-delay: 2s;
+}
 
 @media (min-width: 640px) {
-    .badge-code { bottom: 135px; left: 25px; }
-    .badge-ps { bottom: 85px; left: 95px; }
-    .badge-ai { bottom: 115px; right: 35px; }
-    .badge-figma { bottom: 35px; left: 50px; }
-    .badge-lr { bottom: 45px; right: 85px; }
+    .badge-code {
+        bottom: 135px;
+        left: 25px;
+    }
+
+    .badge-ps {
+        bottom: 85px;
+        left: 95px;
+    }
+
+    .badge-ai {
+        bottom: 115px;
+        right: 35px;
+    }
+
+    .badge-figma {
+        bottom: 35px;
+        left: 50px;
+    }
+
+    .badge-lr {
+        bottom: 45px;
+        right: 85px;
+    }
 }
 
 @keyframes microFloatEffect {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-7px); }
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-7px);
+    }
 }
 
 /* DOCK FLOATING METRICS SYSTEM */
@@ -666,15 +801,34 @@ const socialLinks = [
     justify-content: center;
 }
 
-.metric-num { font-size: 1.75rem; font-weight: 900; line-height: 1; }
-.metric-lbl { font-size: 0.9rem; font-weight: 700; margin-top: 4px; }
-
-@media (min-width: 640px) {
-    .metric-num { font-size: 2.35rem; }
-    .metric-lbl { font-size: 1.1rem; }
+.metric-num {
+    font-size: 1.75rem;
+    font-weight: 900;
+    line-height: 1;
 }
 
-.metric-split-line { width: 2px; height: 40px; background-color: #020617; opacity: 0.25; }
+.metric-lbl {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+@media (min-width: 640px) {
+    .metric-num {
+        font-size: 2.35rem;
+    }
+
+    .metric-lbl {
+        font-size: 1.1rem;
+    }
+}
+
+.metric-split-line {
+    width: 2px;
+    height: 40px;
+    background-color: #020617;
+    opacity: 0.25;
+}
 
 /* 2. INFINITE MARQUEE ENGINE */
 .portfolio-section {
@@ -697,9 +851,17 @@ const socialLinks = [
     justify-content: space-around;
 }
 
-.track-left .marquee-content-loop { animation: scrollLaneLeft 25s linear infinite; }
-.track-right .marquee-content-loop { animation: scrollLaneRight 25s linear infinite; }
-.marquee-lane:hover .marquee-content-loop { animation-play-state: paused; }
+.track-left .marquee-content-loop {
+    animation: scrollLaneLeft 25s linear infinite;
+}
+
+.track-right .marquee-content-loop {
+    animation: scrollLaneRight 25s linear infinite;
+}
+
+.marquee-lane:hover .marquee-content-loop {
+    animation-play-state: paused;
+}
 
 .marquee-card {
     width: 280px;
@@ -712,7 +874,9 @@ const socialLinks = [
 }
 
 @media (min-width: 640px) {
-    .marquee-card { width: 310px; }
+    .marquee-card {
+        width: 310px;
+    }
 }
 
 .marquee-card:hover {
@@ -721,13 +885,23 @@ const socialLinks = [
 }
 
 @keyframes scrollLaneLeft {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(calc(-100% - 24px)); }
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(calc(-100% - 24px));
+    }
 }
 
 @keyframes scrollLaneRight {
-    0% { transform: translateX(calc(-100% - 24px)); }
-    100% { transform: translateX(0); }
+    0% {
+        transform: translateX(calc(-100% - 24px));
+    }
+
+    100% {
+        transform: translateX(0);
+    }
 }
 
 /* 3. GEOMETRIC SHAPES & DECORATIVE GRAPHICS */
@@ -750,8 +924,14 @@ const socialLinks = [
 }
 
 @media (min-width: 640px) {
-    .geometric-shapes-canvas { height: 380px; }
-    .geo-box-blue-large { width: 260px; height: 260px; }
+    .geometric-shapes-canvas {
+        height: 380px;
+    }
+
+    .geo-box-blue-large {
+        width: 260px;
+        height: 260px;
+    }
 }
 
 /* 4. CONTACT & FORM LAYOUT FLOOD */
