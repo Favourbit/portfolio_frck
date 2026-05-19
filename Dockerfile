@@ -32,9 +32,8 @@ COPY . .
 # Create a blank .env file if it doesn't exist so Laravel doesn't panic during build steps
 RUN touch .env
 
-# --- NEW: Create database directory and missing SQLite database file ---
+# Create database directory and missing SQLite database file
 RUN mkdir -p database && touch database/database.sqlite
-# ----------------------------------------------------------------------
 
 # Route Apache directly into Laravel's public directory
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
@@ -46,7 +45,11 @@ RUN composer install --no-dev --optimize-autoloader
 RUN npm install
 RUN npm run build
 
+# --- NEW: Build the tables inside our fresh SQLite database file ---
+RUN php artisan migrate --force
+# ------------------------------------------------------------------
+
 # Fix permissions so Apache can read/write to Laravel's cache/storage folders
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache database/database.sqlite
 
 EXPOSE 80
