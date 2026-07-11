@@ -55,6 +55,7 @@ const socialLinks = [
                         </a>
                     </li>
                 </ul>
+                <p>newest version lets see</p>
             </div>
 
         </div>
