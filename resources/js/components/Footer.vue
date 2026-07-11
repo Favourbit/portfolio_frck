@@ -4,7 +4,7 @@ import { Link } from '@inertiajs/vue3';
 const exploreLinks = [
     { name: 'Work', href: '#project' },
     { name: 'About', href: '#about' },
-    { name: 'Process', href: '#process' },
+    { name: 'Prosedue', href: '#process' },
     { name: 'Resume (PDF)', href: '/resume.pdf', isExternal: true },
 ];
 
