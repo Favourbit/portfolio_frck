@@ -2,16 +2,16 @@
 import { Link } from '@inertiajs/vue3';
 
 const exploreLinks = [
-    { name: 'Work', href: '#work' },
+    { name: 'Work', href: '#project' },
     { name: 'About', href: '#about' },
     { name: 'Process', href: '#process' },
     { name: 'Resume (PDF)', href: '/resume.pdf', isExternal: true },
 ];
 
 const socialLinks = [
-    { name: 'GitHub', href: 'https://github.com' },
+    { name: 'GitHub', href: 'https://github.com/Favourbit' },
     { name: 'LinkedIn', href: 'https://linkedin.com' },
-    { name: 'Dribbble / Behance', href: 'https://dribbble.com' },
+    { name: 'Tiktok', href: 'https://tiktok.com/@frick_design' },
     { name: 'Instagram', href: 'https://instagram.com' },
 ];
 </script>

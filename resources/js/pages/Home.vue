@@ -228,7 +228,7 @@ const socialLinks = [
                 </div>
             </section>
 
-            <section id="work" class="portfolio-section w-full mt-16 py-16">
+            <section id="projects" class="portfolio-section w-full mt-16 py-16">
                 <div class="container limiter px-6 mb-12">
                     <div>
                         <h2 class="text-3xl font-extrabold tracking-tight text-black mb-2">Recent Projects</h2>
@@ -315,7 +315,7 @@ const socialLinks = [
                 </div>
             </section>
 
-            <section id="services" class="services-section w-full px-6 py-24">
+            <section id="experience" class="services-section w-full px-6 py-24">
                 <div class="container limiter">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
                         <div class="services-left-list space-y-12">
@@ -347,7 +347,7 @@ const socialLinks = [
                             </div>
                         </div>
 
-                        <div class="services-right-cards flex flex-col justify-center gap-6">
+                        <div id="" class="services-right-cards flex flex-col justify-center gap-6">
                             <div v-for="service in services" :key="service.id + '-card'"
                                 :class="['p-8 rounded-[24px] shadow-xl flex items-center justify-between transition-all duration-300 hover:scale-[1.01]', service.cardClass]">
                                 <div>
